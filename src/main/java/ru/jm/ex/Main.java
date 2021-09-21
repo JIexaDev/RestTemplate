@@ -2,7 +2,6 @@ package ru.jm.ex;
 
 
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import ru.jm.ex.model.User;
 
@@ -20,28 +19,24 @@ public class Main {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         RestTemplate restTemplate = new RestTemplate();
-
         HttpEntity<User> requestBody = new HttpEntity<>(user1, headers);
-
         ResponseEntity<String> result = restTemplate.exchange(URL, HttpMethod.GET, requestBody, String.class);
-        System.out.println(result);
 
         List<String> cookies = result.getHeaders().get("Set-Cookie");
-        System.out.println(cookies);
-
         headers.set("Cookie", cookies.stream().collect(Collectors.joining(";")));
 
-
+        String code;
         result = restTemplate.exchange(URL, HttpMethod.POST, requestBody, String.class);
-        System.out.println(result);
+        code = result.getBody();
 
         user1.setName("Thomas");
         user1.setLastName("Shelby");
 
         result = restTemplate.exchange(URL, HttpMethod.PUT, requestBody, String.class);
-        System.out.println(result);
+        code += result.getBody();
 
         result = restTemplate.exchange(URL + "/3", HttpMethod.DELETE, requestBody, String.class);
-        System.out.println(result);
+        code += result.getBody();
+        System.out.println("Ответ: " + code);
     }
 }
